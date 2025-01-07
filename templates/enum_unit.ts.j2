@@ -1,8 +1,6 @@
-export const enum {{ident}} {
-  {%- for variant in variants %}
-  {{variant.clone().ident()}} = {{variant.clone().value()}},
-  {%- endfor %} 
-}
+{%- for variant in variants %}
+export const {{ident}}_{{variant.clone().ident()}} = {{variant.clone().value()}};
+{%- endfor %} 
 
 export function write{{ident}}(value: {{ident}}, sinkOrBuf?: SinkOrBuf,): Sink {
   const sink = Sink.create(sinkOrBuf);

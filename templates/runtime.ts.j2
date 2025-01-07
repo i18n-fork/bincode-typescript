@@ -76,8 +76,8 @@ const BIG_64 = BigInt(64);
 const BIG_32Fs = BigInt('4294967295');
 const BIG_64Fs = BigInt('18446744073709551615');
 
-const textEncoder: TextEncoder = new TextEncoder();
-const textDecoder: TextDecoder = new TextDecoder();
+const textEncoder: TextEncoder = /* @__PURE__ */ new TextEncoder();
+const textDecoder: TextDecoder = /* @__PURE__ */ new TextDecoder();
 
 function readU8(sink: Sink): number {
   const value = sink.view.getUint8(sink.position);
@@ -215,23 +215,10 @@ function writeI64(value: bigint, sink: Sink): Sink {
   return sink;
 }
 
-function readUSize(sink: Sink): bigint {
-  return readU64(sink);
-}
-
-function writeUSize(value: bigint, sink: Sink): Sink {
-  writeU64(value, sink);
-  return sink;
-}
-
-function readISize(sink: Sink): bigint {
-  return readI64(sink);
-}
-
-function writeISize(value: bigint, sink: Sink): Sink {
-  writeI64(value, sink);
-  return sink;
-}
+const writeUSize = writeU64;
+const readUSize = readU64;
+const readISize = readI64;
+const writeISize = writeI64;
 
 function readU128(sink: Sink): bigint {
   const high = readU64(sink);

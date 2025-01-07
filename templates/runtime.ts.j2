@@ -283,7 +283,7 @@ function writeString(value: string, sink: Sink): Sink {
 
 function readString(sink: Sink): string {
   const length = readU64(sink);
-  const bytes = readBytes(sink, Number(length));
+  const bytes = readBytes(sink, length);
   return textDecoder.decode(bytes);
 }
 
@@ -370,8 +370,8 @@ function readTypedArray<T extends TypedArray>(
 ): (sink: Sink) => T {
   return (sink: Sink) => {
     const length = readU64(sink);
-    const bytes = readBytes(sink, Number(length) * array_type.BYTES_PER_ELEMENT);
-    return new array_type(bytes.buffer, 0, Number(length));
+    const bytes = readBytes(sink, length * array_type.BYTES_PER_ELEMENT);
+    return new array_type(bytes.buffer, 0, length);
   };
 }
 

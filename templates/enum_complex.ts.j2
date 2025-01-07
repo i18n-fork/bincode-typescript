@@ -36,10 +36,10 @@ export function write{{ident}}(type: Number, value, sinkOrBuf?: SinkOrBuf): Sink
   switch(type) {
 {%- for variant in variants %}
   {%- let i = loop.index %}
-    case {{i - 1}}:
   {%- match variant -%}
     {%- when EnumVariantDeclaration::Unit with { ident, value } %}
     {%- when EnumVariantDeclaration::Unnamed with { ident, types } %}
+      case {{i - 1}}:
       {%- if types.len() == 1 %}
       {{ variant.first_type().writer() }}(value, sink);
       {%- else %}
@@ -47,12 +47,14 @@ export function write{{ident}}(type: Number, value, sinkOrBuf?: SinkOrBuf): Sink
       {{ ty.writer() }}(value[{{loop.index -1}}], sink);
         {%- endfor %} 
       {%- endif -%}
+      break;
     {%- when EnumVariantDeclaration::Named with { ident, types } %}
+      case {{i - 1}}:
       {%- for (id, ty) in types %}
       {{ ty.writer() }}(value.{{id}}, sink);
       {%- endfor -%}
-    {%- endmatch %}
       break;
+    {%- endmatch %}
 {%- endfor %} 
   }
 
@@ -63,10 +65,10 @@ export function read{{ident}}(sinkOrBuf: SinkOrBuf): {{ident}} {
   const sink = Sink.create(sinkOrBuf), kind = readU32(sink), r = [kind];
   switch (kind) {
 {%- for variant in variants %}
-    case {{loop.index - 1}}:
   {%- match variant -%}
     {%- when EnumVariantDeclaration::Unit with { ident, value } %} 
     {%- when EnumVariantDeclaration::Unnamed with { ident, types } %}
+      case {{loop.index - 1}}:
       r.push(
         {%- if types.len() > 1 %}
         [
@@ -80,14 +82,16 @@ export function read{{ident}}(sinkOrBuf: SinkOrBuf): {{ident}} {
           {%- endfor %} 
         {%- endif -%}
       );
+      break;
     {%- when EnumVariantDeclaration::Named with { ident, types } %}
+      case {{loop.index - 1}}:
       r.push({
       {%- for (id, ty) in types %}
         {{ id }}: {{ ty.reader() }}(sink),
       {%- endfor %}
       });
-  {%- endmatch -%}
       break;
+  {%- endmatch -%}
 {%- endfor %}
   }
   return r

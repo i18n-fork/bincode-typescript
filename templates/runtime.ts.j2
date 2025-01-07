@@ -183,35 +183,35 @@ function writeF64(value: number, sink: Sink): Sink {
   return sink;
 }
 
-function readU64(sink: Sink): bigint {
+function readU64(sink: Sink): number {
   const high = readU32(sink);
   const low = readU32(sink);
 
-  return (BigInt(low) << BIG_32) | BigInt(high);
+  return (low << BIG_32) | high;
 }
 
-function writeU64(value: bigint, sink: Sink): Sink {
+function writeU64(value: number, sink: Sink): Sink {
   const low = value & BIG_32Fs;
   const high = value >> BIG_32;
 
-  writeU32(Number(low), sink);
-  writeU32(Number(high), sink);
+  writeU32(low, sink);
+  writeU32(high, sink);
   return sink;
 }
 
-function readI64(sink: Sink): bigint {
+function readI64(sink: Sink): number {
   const high = readI32(sink);
   const low = readI32(sink);
 
-  return (BigInt(low) << BIG_32) | BigInt(high);
+  return (low << BIG_32) | high;
 }
 
-function writeI64(value: bigint, sink: Sink): Sink {
+function writeI64(value: number, sink: Sink): Sink {
   const low = value & BIG_32Fs;
   const high = value >> BIG_32;
 
-  writeI32(Number(low), sink);
-  writeI32(Number(high), sink);
+  writeI32(low, sink);
+  writeI32(high, sink);
   return sink;
 }
 

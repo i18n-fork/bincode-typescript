@@ -36,7 +36,7 @@ function test(buffer: Buffer): api.Sink {{
 
 (async function main() {{
     let inBuf = await getStdin.buffer();
-    let outBuf = test(inBuf).getUint8Array();
+    let outBuf = test(inBuf).bin();
     process.stdout.write(outBuf);
 }})();
         ",

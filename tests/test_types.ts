@@ -361,7 +361,7 @@ export class Sink {
     );
   }
 
-  public getUint8Array(): Uint8Array {
+  public bin(): Uint8Array {
     return new Uint8Array(this.view.buffer.slice(0, this.position));
   }
 

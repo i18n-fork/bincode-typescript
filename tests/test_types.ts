@@ -311,15 +311,15 @@ type SinkOrBuf = Sink | Buffer | ArrayBuffer | Uint8Array;
 
 export class Sink {
   public view: DataView;
-  public position: number;
+  public p: number;
 
   private constructor(input: ArrayBuffer) {
     this.view = new DataView(input);
-    this.position = 0;
+    this.p = 0;
   }
 
   public reserve(extra: number): void {
-    if (this.position + extra <= this.view.buffer.byteLength) {
+    if (this.p + extra <= this.view.buffer.byteLength) {
       return;
     }
 
@@ -362,11 +362,11 @@ export class Sink {
   }
 
   public bin(): Uint8Array {
-    return new Uint8Array(this.view.buffer.slice(0, this.position));
+    return new Uint8Array(this.view.buffer.slice(0, this.p));
   }
 
   public getBuffer(): Buffer {
-    return Buffer.from(this.view.buffer, 0, this.position);
+    return Buffer.from(this.view.buffer, 0, this.p);
   }
 }
 
@@ -379,106 +379,106 @@ const textEncoder: TextEncoder = new TextEncoder();
 const textDecoder: TextDecoder = new TextDecoder();
 
 function readU8(sink: Sink): number {
-  const value = sink.view.getUint8(sink.position);
-  sink.position += 1;
+  const value = sink.view.getUint8(sink.p);
+  sink.p += 1;
   return value;
 }
 
 function writeU8(value: number, sink: Sink): Sink {
   sink.reserve(1);
-  sink.view.setUint8(sink.position, value);
-  sink.position += 1;
+  sink.view.setUint8(sink.p, value);
+  sink.p += 1;
   return sink;
 }
 
 function readI8(sink: Sink): number {
-  const value = sink.view.getInt8(sink.position);
-  sink.position += 1;
+  const value = sink.view.getInt8(sink.p);
+  sink.p += 1;
   return value;
 }
 
 function writeI8(value: number, sink: Sink): Sink {
   sink.reserve(1);
-  sink.view.setInt8(sink.position, value);
-  sink.position += 1;
+  sink.view.setInt8(sink.p, value);
+  sink.p += 1;
   return sink;
 }
 
 function readU16(sink: Sink): number {
-  const value = sink.view.getUint16(sink.position, true);
-  sink.position += 2;
+  const value = sink.view.getUint16(sink.p, true);
+  sink.p += 2;
   return value;
 }
 
 function writeU16(value: number, sink: Sink): Sink {
   sink.reserve(2);
-  sink.view.setUint16(sink.position, value, true);
-  sink.position += 2;
+  sink.view.setUint16(sink.p, value, true);
+  sink.p += 2;
   return sink;
 }
 
 function readI16(sink: Sink): number {
-  const value = sink.view.getInt16(sink.position, true);
-  sink.position += 2;
+  const value = sink.view.getInt16(sink.p, true);
+  sink.p += 2;
   return value;
 }
 
 function writeI16(value: number, sink: Sink): Sink {
   sink.reserve(2);
-  sink.view.setInt16(sink.position, value, true);
-  sink.position += 2;
+  sink.view.setInt16(sink.p, value, true);
+  sink.p += 2;
   return sink;
 }
 
 function readU32(sink: Sink): number {
-  const value = sink.view.getUint32(sink.position, true);
-  sink.position += 4;
+  const value = sink.view.getUint32(sink.p, true);
+  sink.p += 4;
   return value;
 }
 
 function writeU32(value: number, sink: Sink): Sink {
   sink.reserve(4);
-  sink.view.setUint32(sink.position, value, true);
-  sink.position += 4;
+  sink.view.setUint32(sink.p, value, true);
+  sink.p += 4;
   return sink;
 }
 
 function readI32(sink: Sink): number {
-  const value = sink.view.getInt32(sink.position, true);
-  sink.position += 4;
+  const value = sink.view.getInt32(sink.p, true);
+  sink.p += 4;
   return value;
 }
 
 function writeI32(value: number, sink: Sink): Sink {
   sink.reserve(4);
-  sink.view.setInt32(sink.position, value, true);
-  sink.position += 4;
+  sink.view.setInt32(sink.p, value, true);
+  sink.p += 4;
   return sink;
 }
 
 function readF32(sink: Sink): number {
-  const value = sink.view.getFloat32(sink.position, true);
-  sink.position += 4;
+  const value = sink.view.getFloat32(sink.p, true);
+  sink.p += 4;
   return value;
 }
 
 function writeF32(value: number, sink: Sink): Sink {
   sink.reserve(4);
-  sink.view.setFloat32(sink.position, value, true);
-  sink.position += 4;
+  sink.view.setFloat32(sink.p, value, true);
+  sink.p += 4;
   return sink;
 }
 
 function readF64(sink: Sink): number {
-  const value = sink.view.getFloat64(sink.position, true);
-  sink.position += 8;
+  const value = sink.view.getFloat64(sink.p, true);
+  sink.p += 8;
   return value;
 }
 
 function writeF64(value: number, sink: Sink): Sink {
   sink.reserve(8);
-  sink.view.setFloat64(sink.position, value, true);
-  sink.position += 8;
+  sink.view.setFloat64(sink.p, value, true);
+  sink.p += 8;
   return sink;
 }
 
@@ -575,14 +575,14 @@ function writeBool(value: boolean, sink: Sink): Sink {
 
 function writeBytes(value: Uint8Array, sink: Sink): Sink {
   sink.reserve(value.length + 1);
-  new Uint8Array(sink.view.buffer, sink.position).set(value);
-  sink.position += value.length;
+  new Uint8Array(sink.view.buffer, sink.p).set(value);
+  sink.p += value.length;
   return sink;
 }
 
 function readBytes(sink: Sink, length: number): Uint8Array {
-  const bytes = sink.view.buffer.slice(sink.position, sink.position + length);
-  sink.position += length;
+  const bytes = sink.view.buffer.slice(sink.p, sink.p + length);
+  sink.p += length;
   return new Uint8Array(bytes);
 }
 

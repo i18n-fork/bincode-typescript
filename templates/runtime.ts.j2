@@ -71,10 +71,10 @@ export class Sink {
 {%- endif %}
 }
 
-const BIG_32 = BigInt(32);
-const BIG_64 = BigInt(64);
-const BIG_32Fs = BigInt('4294967295');
-const BIG_64Fs = BigInt('18446744073709551615');
+const BIG_32 = 32;
+const BIG_64 = 64;
+const BIG_32Fs = 4294967295;
+const BIG_64Fs = 18446744073709551615;
 
 const textEncoder: TextEncoder = /* @__PURE__ */ new TextEncoder();
 const textDecoder: TextDecoder = /* @__PURE__ */ new TextDecoder();
@@ -276,7 +276,7 @@ function readBytes(sink: Sink, length: number): Uint8Array {
 
 function writeString(value: string, sink: Sink): Sink {
   const bytes = textEncoder.encode(value);
-  writeU64(BigInt(bytes.length), sink);
+  writeU64(bytes.length, sink);
   writeBytes(bytes, sink);
   return sink;
 }
@@ -318,7 +318,7 @@ function writeSeq<T>(
   writeFunc: (value: T, sink: Sink) => Sink
 ): (value: Array<T>, sink: Sink) => Sink {
   return (value: Array<T>, sink: Sink) => {
-    writeU64(BigInt(value.length), sink);
+    writeU64(value.length, sink);
 
     for (const each of value) {
       writeFunc(each, sink);
@@ -355,7 +355,7 @@ type TypedArrayConstructor<T> = {
 };
 
 function writeTypedArray<T extends TypedArray>(value: T, sink: Sink): Sink {
-  writeU64(BigInt(value.length), sink);
+  writeU64(value.length, sink);
 
   writeBytes(
     new Uint8Array(value.buffer.slice(value.byteOffset, value.byteLength)),
@@ -380,7 +380,7 @@ function writeMap<TK, TV>(
   writeValueFunc: (value: TV, sink: Sink) => Sink
 ): (value: Map<TK, TV>, sink: Sink) => Sink {
   return (value: Map<TK, TV>, sink: Sink) => {
-    writeU64(BigInt(value.size), sink);
+    writeU64(value.size, sink);
 
     value.forEach((v, k) => {
       writeKeyFunc(k, sink);

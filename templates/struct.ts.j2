@@ -6,7 +6,8 @@ export interface {{ident}} {
   {%- endfor %} 
 {%- else -%}
   {% for (id, ty) in fields %}
-  {{ id.clone().unwrap() }}: {{ ty.ts_type() }};
+  /// {{ id.clone().unwrap() }}
+  {{ ty.ts_type() }},
   {%- endfor %} 
 {%- endif %}
 }
@@ -14,29 +15,16 @@ export interface {{ident}} {
 export function write{{ident}}(value: {{ident}}, sinkOrBuf?: SinkOrBuf): Sink {
   const sink = Sink.create(sinkOrBuf);
 {%- for (id, ty) in fields -%}
-  {%- match id -%}
-    {%- when Some with (id) %}
-  {{ ty.writer() }}(value.{{id}}, sink);
-    {%- when None %}
   {{ ty.writer() }}(value[{{loop.index - 1}}], sink);
-  {%- endmatch%}
 {%- endfor %} 
   return sink;
 }
 
 export function read{{ident}}(sinkOrBuf: SinkOrBuf): {{ident}} {
   const sink = Sink.create(sinkOrBuf);
-  {% if self.is_tuple() -%}
   return [
     {%- for (id, ty) in fields %}
     {{ ty.reader() }}(sink),
     {%- endfor %} 
   ];
-  {%- else -%}
-  return {
-    {%- for (id, ty) in fields %}
-    {{id.clone().unwrap()}}: {{ ty.reader() }}(sink),
-    {%- endfor %} 
-  };
-  {%- endif %}
 }
